@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Racing Game</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 10px 0;
+    }
+
+    canvas {
+      background: #555;
+      display: block;
+      margin: auto;
+      border: 3px solid white;
+    }
+
+    .controls {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🏎️ Priyanshu Racing Game</h1>
+<canvas id="game" width="400" height="600"></canvas>
+<div class="controls">Use ⬅️ ➡️ Arrow Keys to move</div>
+
+<script>
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+
+  let carX = 175;
+  let carY = 500;
+  let speed = 4;
+
+  let roadY = 0;
+
+  let enemyY = -100;
+  let enemyX = Math.random() * 340;
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft" && carX > 0) carX -= 20;
+    if (e.key === "ArrowRight" && carX < 350) carX += 20;
+  });
+
+  function drawRoad() {
+    ctx.fillStyle = "#333";
+    ctx.fillRect(0, 0, 400, 600);
+
+    ctx.strokeStyle = "white";
+    ctx.setLineDash([20, 20]);
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(200, roadY);
+    ctx.lineTo(200, 600);
+    ctx.stroke();
+
+    roadY += speed;
+    if (roadY > 40) roadY = 0;
+  }
+
+  function drawCar() {
+    ctx.fillStyle = "red";
+    ctx.fillRect(carX, carY, 40, 70);
+  }
+
+  function drawEnemy() {
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(enemyX, enemyY, 40, 70);
+    enemyY += speed;
+
+    if (enemyY > 600) {
+      enemyY = -100;
+      enemyX = Math.random() * 340;
+    }
+
+    // collision
+    if (
+      carX < enemyX + 40 &&
+      carX + 40 > enemyX &&
+      carY < enemyY + 70 &&
+      carY + 70 > enemyY
+    ) {
+      alert("💥 Crash! Game Over");
+      location.reload();
+    }
+  }
+
+  function gameLoop() {
+    ctx.clearRect(0, 0, 400, 600);
+    drawRoad();
+    drawCar();
+    drawEnemy();
+    requestAnimationFrame(gameLoop);
+  }
+
+  gameLoop();
+</script>
+
+</body>
+</html>
